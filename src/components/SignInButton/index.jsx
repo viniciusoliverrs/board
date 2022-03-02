@@ -1,7 +1,7 @@
 import styles from './styles.module.scss'
 import { FaGithub } from 'react-icons/fa'
 import { signIn, signOut, useSession } from 'next-auth/client'
-
+import Image from 'next/image'
 export function SignInButton() {
     const [session] = useSession()
     return session ? (
@@ -10,7 +10,9 @@ export function SignInButton() {
             className={styles.signInButton}
             onClick={() => signOut()}
         >
-            <img src={session.user.image} alt='Foto do usuário' />
+            <div>
+                <Image objectFit='fill' width={35} height={35} src={session.user.image} alt='Foto do usuário' />
+            </div>
             Olá {session.user.name}
             <FaGithub color='#737380' className={styles.closeIcon} />
         </button>

@@ -16,63 +16,72 @@ type Task = {
   name: string;
 }
 
-interface TaskListProps{
+interface TaskListProps {
   data: string;
 }
 
-export default function Task({ data }: TaskListProps){
+export default function Task({ data }: TaskListProps) {
   const task = JSON.parse(data) as Task;
 
-  return(
+  return (
     <>
-    <Head>
-      <title>Detalhes da sua tarefa</title>
-    </Head>
-    <article className={styles.container}>
-      <div className={styles.actions}>
-        <div>
-          <FiCalendar size={30} color="#FFF"/>
-          <span>Tarefa criada:</span>
-          <time>{task.createdFormated}</time>
+      <Head>
+        <title>Detalhes da sua tarefa</title>
+      </Head>
+      <article className={styles.container}>
+        <div className={styles.actions}>
+          <div>
+            <FiCalendar size={30} color="#FFF" />
+            <span>Tarefa criada:</span>
+            <time>{task.createdFormated}</time>
+          </div>
         </div>
-      </div>    
-      <p>{task.task}</p>  
-    </article>
+        <p>{task.task}</p>
+      </article>
     </>
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, params}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, params }) => {
   const { id } = params;
   const session = await getSession({ req });
 
-  if(!session?.id){
-    return{
-      redirect:{
+  if (!session?.vip) {
+    return {
+      redirect: {
         destination: '/board',
         permanent: false,
       }
     }
   }
 
-  const data = await firebase.firestore().collection('tasks')
-  .doc(String(id))
-  .get()
-  .then((snapshot)=>{
-    const data = {
-      id: snapshot.id,
-      created: snapshot.data().created,
-      createdFormated: snapshot.data().createdFormated,
-      task: snapshot.data().task,
-      userId: snapshot.data().userId,
-      name: snapshot.data().name
+  const data = await firebase.firestore().collection('tarefas')
+    .doc(String(id))
+    .get()
+    .then((snapshot) => {
+      const data = {
+        id: snapshot.id,
+        created: snapshot.data().created,
+        createdFormated: snapshot.data().createdFormated,
+        task: snapshot.data().task,
+        userId: snapshot.data().userId,
+        name: snapshot.data().name
+      }
+
+      return JSON.stringify(data);
+    }).catch(() => {
+      return {}
+    })
+  if (Object.keys(data).length === 0) {
+    return {
+      redirect: {
+        destination: '/board',
+        permanent: false,
+      }
     }
-
-    return JSON.stringify(data);
-  })
-
-  return{
-    props:{
+  }
+  return {
+    props: {
       data
     }
   }

@@ -3,6 +3,7 @@
   max-width: 1120px;
   margin: 0 auto;
   padding: 0 2rem;
+  min-height: (100vh -6rem);
 
   display: flex;
   align-items: center;
@@ -12,7 +13,10 @@
   img{
     margin-top: 2rem;
   }
-
+  h3{
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
 }
 
 .callToAction{
